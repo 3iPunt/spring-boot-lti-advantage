@@ -5,17 +5,22 @@ import lombok.RequiredArgsConstructor;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.io.Serializable;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * @author xaracil@uoc.edu
  */
 @RequiredArgsConstructor
-public class HttpSessionOIDCLaunchSession implements OIDCLaunchSession {
+public class HttpSessionOIDCLaunchSession implements OIDCLaunchSession, Serializable {
 	private final static String STATE_SESSION_ATTRIBUTE_NAME = "currentLti1.3State";
 	private final static String NONCE_SESSION_ATTRIBUTE_NAME = "currentLti1.3Nonce";
 	private final static String TARGETLINK_URI_SESSION_ATTRIBUTE_NAME = "currentLti1.3TargetLinkUri";
 
-	private final HttpServletRequest request;
+	private final transient HttpServletRequest request;
+
+	public final static List<String> KEYS = Arrays.asList(STATE_SESSION_ATTRIBUTE_NAME, NONCE_SESSION_ATTRIBUTE_NAME, TARGETLINK_URI_SESSION_ATTRIBUTE_NAME);
 
 	public void clear() {
 		final HttpSession session = this.request.getSession(false);
@@ -42,7 +47,11 @@ public class HttpSessionOIDCLaunchSession implements OIDCLaunchSession {
 	}
 
 	private void setAttribute(String name, String value) {
-		request.getSession().setAttribute(name, value);
+		if (value == null) {
+			request.getSession().removeAttribute(name);
+		} else {
+			request.getSession().setAttribute(name, value);
+		}
 	}
 
 	@Override

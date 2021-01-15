@@ -16,13 +16,14 @@ import org.springframework.security.oauth2.common.OAuth2RefreshToken;
 import org.springframework.util.StringUtils;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.*;
 
 /**
  * @author xaracil@uoc.edu
  */
 @AllArgsConstructor
-public class LTIAccessTokenProvider implements AccessTokenProvider {
+public class LTIAccessTokenProvider implements AccessTokenProvider, Serializable {
 	private Tool tool;
 	private final static long MINUTES = 60 * 1000;
 

@@ -7,6 +7,7 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.Collections;
 
 /**
  * @author xaracil@uoc.edu
@@ -23,7 +24,7 @@ public class NamesRoleServiceMessageConverter extends MappingJackson2HttpMessage
 	}
 
 	private void setContentType() {
-		setSupportedMediaTypes(Arrays.asList(mediaType(ContentTypes.REQUEST), mediaType(ContentTypes.RESPONSE)));
+		setSupportedMediaTypes(Collections.singletonList(mediaType(ContentTypes.REQUEST)));
 	}
 
 	private MediaType mediaType(ContentTypes contentTypes) {

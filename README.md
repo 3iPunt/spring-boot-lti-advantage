@@ -6,13 +6,25 @@ See https://github.com/UOC/java-lti-1.3-provider-example for an example.
 
 ## Usage
 
-Just add the dependency to your `pom.xml` file:
+1. Set your maven installation to work with Github packages, following https://help.github.com/en/packages/using-github-packages-with-your-projects-ecosystem/configuring-apache-maven-for-use-with-github-packages#authenticating-to-github-packages
+
+  Repository info:
+  
+  ```xml
+        <repository>
+          <id>github-uoc</id>
+          <name>GitHub UOC Apache Maven Packages</name>
+          <url>https://maven.pkg.github.com/uoc</url>
+        </repository>				
+  ```
+
+2. Add the dependency to your `pom.xml` file:
 
 ```xml
   <dependency>
 	<groupId>edu.uoc.elc.lti</groupId>
 	<artifactId>spring-boot-lti-advantage</artifactId>
-	<version>0.0.5</version>
+	<version>0.0.7</version>
   </dependency>
 ```  
 
