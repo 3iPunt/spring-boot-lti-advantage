@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * LTI Pre Auth filter. Tries to perform a preauth using LTI validation
@@ -34,8 +35,21 @@ public class LTIProcessingFilter extends AbstractPreAuthenticatedProcessingFilte
 		setAuthenticationDetailsSource(new LTIAuthenticationDetailsSource(toolDefinitionBean));
 	}
 
+	private void debugCall(HttpServletRequest httpServletRequest) {
+		if (this.logger.isDebugEnabled()) {
+
+			String resultSet =
+					httpServletRequest.getParameterMap().entrySet()
+							.stream()
+							.map(e -> e.getKey() + "=" + String.join(", ", e.getValue()))
+							.collect(Collectors.joining(" "));
+			this.logger.info(httpServletRequest.getSession().getId()+" "+httpServletRequest.getRequestURI()+" results query "+resultSet);
+
+		}
+	}
 	private Tool getTool(HttpServletRequest httpServletRequest) {
 		ToolFactory toolFactory = new ToolFactory();
+		debugCall(httpServletRequest);
 		return toolFactory.from(toolDefinitionBean, httpServletRequest);
 	}
 
@@ -53,6 +67,7 @@ public class LTIProcessingFilter extends AbstractPreAuthenticatedProcessingFilte
 			Authentication currentUser = SecurityContextHolder.getContext().getAuthentication();
 			return currentUser != null ? currentUser.getName() : null;
 		}
+		this.debugCall(httpServletRequest);
 
 		final Tool tool = getTool(httpServletRequest);
 		tool.validate(token, state);
@@ -74,11 +89,32 @@ public class LTIProcessingFilter extends AbstractPreAuthenticatedProcessingFilte
 			Authentication currentUser = SecurityContextHolder.getContext().getAuthentication();
 			return currentUser != null ? currentUser.getCredentials() : null;
 		}
+		this.debugCall(httpServletRequest);
 
 		final Tool tool = getTool(httpServletRequest);
 		tool.validate(token, state);
 		if (tool.isValid()) {
 			return tool;
+		}
+		if (this.logger.isDebugEnabled()) {
+			this.logger.debug(httpServletRequest.getSession().getId() + " Auth is not valid " + tool.getReason());
+
+			HttpSession session = httpServletRequest.getSession(false);
+			if (session != null) {
+				final List<String> keysToSave = HttpSessionOIDCLaunchSession.KEYS;
+				final Enumeration<String> attributeNames = session.getAttributeNames();
+				while (attributeNames.hasMoreElements()) {
+					final String name = attributeNames.nextElement();
+					this.logger.debug(session.getId() + " Auth is not valid session key is " + name + " and value " + session.getAttribute(name));
+					if (!keysToSave.contains(name)) {
+						this.logger.debug(session.getId() + " Auth is not valid session key is not on keys to save " + name + " and value " + session.getAttribute(name));
+					} else {
+						this.logger.debug(session.getId() + " Auth is not valid session key is on keys to save " + name + " and value " + session.getAttribute(name));
+					}
+				}
+			} else {
+					this.logger.debug("Auth is not valid session is null ");
+			}
 		}
 
 		return "{ N.A. }";

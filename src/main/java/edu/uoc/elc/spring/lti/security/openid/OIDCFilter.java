@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.stream.Collectors;
 
 /**
  * @author xaracil@uoc.edu
@@ -29,6 +30,14 @@ public class OIDCFilter extends AbstractAuthenticationProcessingFilter {
 	@Override
 	public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException, IOException, ServletException {
 		ToolFactory toolFactory = new ToolFactory();
+		if (this.logger.isDebugEnabled()) {
+			String resultSet =
+					request.getParameterMap().entrySet()
+							.stream()
+							.map(e -> e.getKey() + "=" + String.join(", ", e.getValue()))
+							.collect(Collectors.joining(" "));
+			this.logger.debug(request.getSession().getId() + " " + request.getRequestURI() + " results query " + resultSet);
+		}
 		final Tool tool = toolFactory.from(toolDefinitionBean, request, true);
 
 		// get data from request

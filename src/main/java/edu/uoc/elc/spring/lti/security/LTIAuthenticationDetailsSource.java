@@ -16,6 +16,7 @@ import org.springframework.security.web.authentication.preauth.PreAuthenticatedG
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 /**
  * AuthenticationDetailsSource from LTI
@@ -43,6 +44,14 @@ public class LTIAuthenticationDetailsSource implements AuthenticationDetailsSour
 	protected Collection<String> getUserRoles(HttpServletRequest request) {
 		ArrayList<String> ltiUserRolesList = new ArrayList<>();
 		ToolFactory toolFactory = new ToolFactory();
+		if (this.logger.isDebugEnabled()) {
+			String resultSet =
+					request.getParameterMap().entrySet()
+							.stream()
+							.map(e -> e.getKey() + "=" + String.join(", ", e.getValue()))
+							.collect(Collectors.joining(" "));
+			this.logger.debug(request.getSession().getId() + " " + request.getRequestURI() + " results query " + resultSet);
+		}
 		this.tool = toolFactory.from(toolDefinitionBean, request);
 
 		String token = TokenFactory.from(request);

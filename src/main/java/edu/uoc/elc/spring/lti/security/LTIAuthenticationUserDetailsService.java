@@ -1,6 +1,7 @@
 package edu.uoc.elc.spring.lti.security;
 
 import edu.uoc.elc.lti.tool.Tool;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.AuthenticationUserDetailsService;
@@ -15,6 +16,7 @@ import java.util.Collection;
  *
  * @author xaracil@uoc.edu
  */
+@Slf4j
 public class LTIAuthenticationUserDetailsService<T extends Authentication> implements AuthenticationUserDetailsService<T> {
 
 	@Override
@@ -31,6 +33,13 @@ public class LTIAuthenticationUserDetailsService<T extends Authentication> imple
 
 				// create user details
 				return new User(authentication.getName(), "N. A.", tool, authorities);
+			}
+		} else {
+
+			if (log.isDebugEnabled()) {
+				log.debug("Auth is not instance of Tool {}", authentication.getCredentials().toString());
+				log.debug("Auth is not instance of Tool2 {}", authentication.getDetails().toString());
+				log.debug("Auth is not instance of Tool3 {}", authentication.toString());
 			}
 		}
 		return null;
