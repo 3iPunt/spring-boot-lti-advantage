@@ -10,7 +10,7 @@
 
 	<groupId>edu.uoc.elc.lti</groupId>
 	<artifactId>spring-boot-lti-advantage</artifactId>
-	<version>0.0.11</version>
+	<version>0.0.12</version>
 	<packaging>jar</packaging>
 
   <name>${project.groupId}:${project.artifactId}</name>

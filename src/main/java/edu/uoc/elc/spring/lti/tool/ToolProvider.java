@@ -52,5 +52,9 @@ public class ToolProvider {
 		return ltiAccessTokenProvider;
 	}
 
+	public String getLocale() {
+		return tool.getLocale();
+	}
+
 
 }
