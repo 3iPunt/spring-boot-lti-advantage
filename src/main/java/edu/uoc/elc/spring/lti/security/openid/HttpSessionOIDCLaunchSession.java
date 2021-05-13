@@ -70,7 +70,10 @@ public class HttpSessionOIDCLaunchSession implements OIDCLaunchSession, Serializ
 	}
 
 	private String getAttribute(String name) {
-		Object state = request.getSession().getAttribute(name);
+		Object state = null;
+		if (request != null) {
+			state = request.getSession() != null ? request.getSession().getAttribute(name) : null;
+		}
 		return state != null ? state.toString() : null;
 	}
 }
